@@ -11,6 +11,7 @@ def crawl_and_save_all_student_pictures(target_dir="pics"):
     :param target_dir: output file directory name
     """
     ids = read_all_students_id()
+    i = 0
     for id in ids:
         url = eportfolio_url_prefix + id + ".jpg"
         r = requests.get(url, stream=True)
@@ -18,6 +19,8 @@ def crawl_and_save_all_student_pictures(target_dir="pics"):
             with open(target_dir + '/' + id + ".jpg", 'wb') as f:
                 for chunk in r.iter_content(1024):
                     f.write(chunk)
+        i += 1
+        print(str(i) + " pictures saved.")
 
 
 def read_all_students_id():
@@ -25,7 +28,7 @@ def read_all_students_id():
     :return: all students' ids
     """
     ids = []
-    with open('students.txt') as file:
+    with open('all_students.txt', 'r', encoding='utf-8') as file:
         for s in file.readlines():
             s = s.strip()
             if len(s) != 0:
@@ -61,3 +64,7 @@ def read_all_students(normalized=False):
                 img = student_imgs_dict[id]
                 students.append(Student(id, name, gender, img))
     return students
+
+
+if __name__ == '__main__':
+    crawl_and_save_all_student_pictures()
