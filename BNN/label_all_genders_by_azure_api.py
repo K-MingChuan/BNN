@@ -22,12 +22,12 @@ params = {
 
 with open('all_faces.json', 'r', encoding='utf-8') as fr:
     all_faces = json.load(fr)
-for student_id in read_all_students_id():
+for student_id in [id for id in read_all_students_id() if id not in all_faces]:
     time.sleep(3)
     img_url = BASE_EP_URL.format(student_id)
     response = requests.post(BASE_URL, params=params, headers=headers, json={"url": img_url})
     faces = response.json()
-    all_faces.append(faces)
+    all_faces[student_id] = faces
     with open('all_faces.json', 'w+', encoding='utf-8') as fw:
         json.dump(all_faces, fw)
     print(str(len(all_faces)) + " students' faces saved.")
