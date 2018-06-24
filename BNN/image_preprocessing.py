@@ -2,6 +2,7 @@ import os
 import io
 from PIL import Image
 from scipy import misc
+from collections import namedtuple
 
 
 def create_normalized_image_dict(student_ids, resize=None):
@@ -17,8 +18,9 @@ def create_normalized_image_dict(student_ids, resize=None):
     resize_all_images_and_save(imgs, resize)
 
     s_dict = {}
+
     for student_id in student_ids:
-        path = 'pics/' + student_id + '.jpg'
+        path = 'face_pics_resized/second_folder/' + student_id + '.jpg'
         img = misc.imread(path)
         s_dict[student_id] = img
     return s_dict
@@ -32,22 +34,47 @@ def create_student_image_dict(student_ids):
 
     s_dict = {}
     for student_id in student_ids:
-        path = 'pics/' + student_id + '.jpg'
+        path = 'face_pics_resized/second_folder/' + student_id + '.jpg'
         img = misc.imread(path)
         s_dict[student_id] = img
     return s_dict
 
-
-def read_all_images(directory='pics'):
-    """
-    :return: all images under specific directory, if no directory specified, 'pics' used as default
-    """
+def read_all_prediction_images(directory='face_pics_resized/second_folder'):
     imgs = []
     filenames = os.listdir(directory)
+    for i in range(0,9000):
+        filenames.pop(0)
+
     for filename in filenames:
         imgs.append(Image.open(directory + '/' + filename))
     return imgs
 
+def read_all_images(directory='face_pics_resized/second_folder'):
+    """
+    :return: all images under specific directory, if no directory specified, 'pics' used as default
+    """
+
+    imgs = []
+    filenames = os.listdir(directory)
+    for filename in filenames:
+        imgs.append(Image.open(directory + '/' + filename))
+
+    return imgs
+
+def read_all_id_images(directory='face_pics_resized/second_folder'):
+
+    StudentsId = namedtuple('StudentsId', 'id')
+    imagesId = []
+    filenames = os.listdir(directory)
+    for filename in filenames:
+        filename = filename.strip()
+        if len(filename) != 0:
+            fields = filename.split('.')
+            if len(fields) != 2:
+                continue
+            id = fields[0]
+            imagesId.append(StudentsId(id))
+    return imagesId
 
 def find_smallest_size(images):
     """
@@ -72,3 +99,5 @@ def resize_all_images_and_save(images, resize):
         filename = image.filename
         image = image.resize(resize, Image.BILINEAR)
         image.save(filename)
+
+
